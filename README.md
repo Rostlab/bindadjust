@@ -1,7 +1,20 @@
 # BindRefine
 
 This project aims to refine per residue ligand type predictions using predicted distance maps. This is achieved by clustering the residues based on the distances and subsequently removing noise and/or small clusters from the predictions. The goal
-is to reduce the number of false positive while maintaining a high recall.
+is to reduce the number of false positive while maintaining a high recall. 
+
+To access the performace of the tool visually, the predictions and the refined predictions can be visualized in gif-format.
+
+##Example
+
+###Before
+![](demo_files/Q9KFA8_2hti_before.gif)
+
+###After
+![](demo_files/Q9KFA8_2hti_after.gif)
+
+
+While some TP (red) are removes, the cluster at the top stays. 
 
 ### How To
 
