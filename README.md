@@ -1,23 +1,24 @@
 # BindRefine
 
-This package aims to refine per residue ligand type predictions by clustering the residues based on a predicted distances.
+This project aims to refine per residue ligand type predictions using predicted distance maps. This is achieved by clustering the residues based on the distances and subsequently removing noise and/or small clusters from the predictions. The goal
+is to reduce the number of false positive while maintaining a high recall.
 
 ### How To
-
 
 You can find example files for each input files in examples/.
 
 Input files:
+
 1. Uniprot IDs
 2. Ligand Map (offset and Uniprot -> PDB link)
 3. (optional) Trues, per residue ligand type
 4. Predictions, per residue binding molecule
-
-
+5. Distance maps for each protein
 
 Refinement of binding residue predictions using known and predicted structures.
 
 ### Usage
+
 ```
 usage: main.py [-h] -o OUTDIR -u UNIPROT -lm LIGANDMAP -p PREDSDIR -t TRUES
                [-th THRESHOLD] [-fps FPS] [-d DISTANCEMAP] [-v] [-s] [-r]
