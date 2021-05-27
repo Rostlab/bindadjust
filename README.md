@@ -8,9 +8,11 @@ To access the performace of the tool visually, the predictions and the refined p
 ##Example
 
 ###Before
+
 ![](demo_files/Q9KFA8_2hti_before.gif)
 
 ###After
+
 ![](demo_files/Q9KFA8_2hti_after.gif)
 
 
