@@ -1,0 +1,6 @@
+pandas~=1.2.4
+imageio~=2.9.0
+pymol~=2.4.2
+numpy~=1.20.1
+scikit-learn~=0.24.2
+matplotlib~=3.3.4
