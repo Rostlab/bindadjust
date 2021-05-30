@@ -54,6 +54,7 @@ def vis_binding(preds, trues, offset, pdb_id, uniprot_id, outdir, suffix, fps):
     selection_name = "prot"
 
     cmd.fetch(pdb_id, name=selection_name, quiet=1)
+    cmd.bg_color(color = "white")
     cmd.hide("everything")
     # cmd.show("prot")
     # show whole protein as grey surface
@@ -73,7 +74,7 @@ def vis_binding(preds, trues, offset, pdb_id, uniprot_id, outdir, suffix, fps):
         cmd.select(name="FN", selection="resi " + "+".join(FN))
         cmd.color(selection="FN", color="yellow")
 
-    for i in range(int(360 / fps)):
+    for i in range(int(360 / int(fps))):
         cmd.turn("y", fps)
         cmd.png(os.path.join(outdir, uniprot_id + "_" + pdb_id + "_" + str(i).zfill(3) + ".png"), ray=1, quiet=1)
 
@@ -115,9 +116,15 @@ def filter_preds(distancemaps, uniprot_id, preds, eps=10, min_samples=3):
 
     # new method to find min_samples
     # min_samples = int(np.sqrt(len(preds)))
-    # eps = np.mean(relevant_distances)
+    print(f"mean distance = {str(np.mean(relevant_distances))}")
+    if np.mean(relevant_distances) < 7:
+        print("thrown out")
+        preds = [i + 1 for i in preds]
+        return preds
     # if(eps == 0.0):
-    #    return preds
+    #     preds = [i + 1 for i in preds]
+    #     return preds
+
 
     # now we cluster the relevant distances
     # print(relevant_distances)
@@ -136,12 +143,12 @@ def filter_preds(distancemaps, uniprot_id, preds, eps=10, min_samples=3):
 
     # print(f"Noise has been filtered: {str(n_noise_/len(labels)).format(4)}")
     #dont do anything if too many clusters
-    if n_clusters_ > 2:
-        preds = [i + 1 for i in preds]
-        return preds
+  #  if n_clusters_ > 2:
+  #      preds = [i + 1 for i in preds]
+  #      return preds
 
-   # print('Estimated number of clusters: %d' % n_clusters_)
-   # print('Estimated number of noise points: %d' % n_noise_)
+    print('Estimated number of clusters: %d' % n_clusters_)
+    print('Estimated number of noise points: %d' % n_noise_)
 
     # we remove the noise calculated by dbscan from our predictions
     # get indices of noise

@@ -90,12 +90,18 @@ if __name__ == '__main__':
     # now vis the preds in pymol
     # we do this for every uniprot ID in the train set
     uniprot_ids = list(uniprot_ids)
-    # epsilons = [10, 12, 15, 18, 20, 21, 22, 23, 24, 25, 26]
-    # min_samples = [1, 2, 3, 4, 5, 6, 7]
+    epsilons = [15, 18, 20, 21, 22, 23, 24, 25, 26]
+    min_samples = [1, 2, 3, 4, 5, 6, 7]
     min_samples = [2]
     epsilons = [24]
     # cutoffs = [0.2,0.3,0.4,0.5]
-    uniprot_ids = ['O43809', 'Q983T0', 'P82291']
+
+    #improve these
+    uniprot_ids = ['O43809', 'Q983T0', 'P82291', 'O77093', 'B3FQS5', 'Q8W453', 'P04382', 'Q6SVB6', 'P68265', 'Q5TA50', 'Q65LG7', 'P32173', 'Q3SFD8', 'Q6SJ71']
+
+    #keep these
+    #uniprot_ids = ['Q9SPD4', 'P00592', 'P32021', 'P59082', 'P02210', 'O76242', 'Q8DM36', 'D5CN26', 'O25423', 'P18000', 'Q8K2P6', 'P21163', 'Q2RRQ9', 'E0TW95', 'A6T925', 'Q7PGA3', 'P15369', 'Q9BYN0', 'Q8E372', 'P17728', 'Q8C6P8', 'P26788', 'Q9Z1R3', 'Q2F1K8', 'P49789', 'P04043', 'Q9KFA8']
+
     for min_sample in min_samples:
         for eps in epsilons:
             for uniprot_id in uniprot_ids:
@@ -134,8 +140,9 @@ if __name__ == '__main__':
                     df = df.append([[uniprot_id, TP, FP, FN, precision, recall, F1]])
 
 
-            #stats = df.describe()
-            #print(f"eps: {str(eps)} min_samples {min_sample} avg. precision: {stats[4][1]} avg. recall: {stats[5][1]} avg. F1: {stats[6][1]}")
+            stats = df.describe()
+            print(f"baseline avg. precision: {stats[4][1]} avg. recall: {stats[5][1]} avg. F1: {stats[6][1]}")
+            print(f"eps: {str(eps)} min_samples {min_sample} avg. precision: {stats[10][1]} avg. recall: {stats[11][1]} avg. F1: {stats[12][1]}")
             if save:
                 print("saved .csv.")
                 if args.distancemap is not None:
