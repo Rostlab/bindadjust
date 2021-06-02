@@ -4,6 +4,7 @@ from sklearn.cluster import DBSCAN
 from pymol import cmd
 import numpy as np
 
+
 def calc_stats(preds, trues):
     TP = list(trues & preds)
     FP = list(preds - trues)
@@ -31,7 +32,6 @@ def calc_stats(preds, trues):
 
 
 def vis_binding(preds, trues, offset, pdb_id, uniprot_id, outdir, suffix, fps):
-
     TP = list(trues & preds)
     FP = list(preds - trues)
     FN = list(trues - preds)
@@ -54,29 +54,36 @@ def vis_binding(preds, trues, offset, pdb_id, uniprot_id, outdir, suffix, fps):
     selection_name = "prot"
 
     cmd.fetch(pdb_id, name=selection_name, quiet=1)
-    cmd.bg_color(color = "white")
+    cmd.bg_color(color="white")
     cmd.hide("everything")
     # cmd.show("prot")
     # show whole protein as grey surface
+    cmd.set_color("TN", [235, 235, 235])
     cmd.show(selection=selection_name, representation="surface")
-    cmd.color(color="grey", selection=selection_name)
+    cmd.color(color="TN", selection=selection_name)
+
+    # define color for TP, FP, FN
+    cmd.set_color("TP", [17, 119, 51])
+    cmd.set_color("FP", [170, 68, 153])
+    cmd.set_color("FN", [136, 204, 238])
 
     # color TP, FP and FN if they exist
     if len(TP) > 0:
         cmd.select(name="TP", selection="resi " + "+".join(TP))
-        cmd.color(selection="TP", color="green")
+        cmd.color(selection="TP", color="TP")
 
     if len(FP) > 0:
         cmd.select(name="FP", selection="resi " + "+".join(FP))
-        cmd.color(selection="FP", color="red")
+        cmd.color(selection="FP", color="FP")
 
     if len(FN) > 0:
         cmd.select(name="FN", selection="resi " + "+".join(FN))
-        cmd.color(selection="FN", color="yellow")
+        cmd.color(selection="FN", color="FN")
 
+    cmd.set("ray_opaque_background", 1)
     for i in range(int(360 / int(fps))):
         cmd.turn("y", fps)
-        cmd.png(os.path.join(outdir, uniprot_id + "_" + pdb_id + "_" + str(i).zfill(3) + ".png"), ray=1, quiet=1)
+        cmd.png(os.path.join(outdir, uniprot_id + "_" + pdb_id + "_" + str(i).zfill(3) + ".png"), ray=1, quiet=2, height=500, width=600)
 
     cmd.delete("*")
 
@@ -94,12 +101,11 @@ def vis_binding(preds, trues, offset, pdb_id, uniprot_id, outdir, suffix, fps):
     for file in os.listdir():
         if file.endswith(".cif"): os.remove(file)
 
-def filter_preds(distancemaps, uniprot_id, preds, eps=10, min_samples=3):
 
+def filter_preds(distancemaps, uniprot_id, preds, eps=10, min_samples=3):
     distance_map = np.load(f"{distancemaps}/{uniprot_id}.npy")
     valid_layer = distance_map[:, :, 4]
     c_backbone_distances = distance_map[:, :, 3]
-
 
     # TODO: careful here, substracted one to convert from 1-based indices in preds to 0-based indices in nparray
     preds = sorted(list([int(i) - 1 for i in preds]))  # uniprot_to_preds['P23873']]))
@@ -125,7 +131,6 @@ def filter_preds(distancemaps, uniprot_id, preds, eps=10, min_samples=3):
     #     preds = [i + 1 for i in preds]
     #     return preds
 
-
     # now we cluster the relevant distances
     # print(relevant_distances)
     # if the distances are invalid, we just return the preds
@@ -142,10 +147,10 @@ def filter_preds(distancemaps, uniprot_id, preds, eps=10, min_samples=3):
     n_noise_ = list(labels).count(-1)
 
     # print(f"Noise has been filtered: {str(n_noise_/len(labels)).format(4)}")
-    #dont do anything if too many clusters
-  #  if n_clusters_ > 2:
-  #      preds = [i + 1 for i in preds]
-  #      return preds
+    # dont do anything if too many clusters
+    #  if n_clusters_ > 2:
+    #      preds = [i + 1 for i in preds]
+    #      return preds
 
     print('Estimated number of clusters: %d' % n_clusters_)
     print('Estimated number of noise points: %d' % n_noise_)
