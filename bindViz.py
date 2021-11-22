@@ -116,28 +116,32 @@ def main(outdir : str, preds_dir  : str, true_file : str, ligand_map : str, liga
 
     if mode == "binary":
         uniprot_ids = (uniprot_to_true.keys() & uniprot_to_preds.keys() & uniprot_to_pdb.keys())
-        for uniprot_id in tqdm(uniprot_ids, desc=f"Rendering {len(uniprot_ids)} proteins in {mode =}", ncols=100):
+        for uniprot_id in tqdm(uniprot_ids, desc=f"Rendering {len(uniprot_ids)} proteins in {mode = }", ncols=100):
             preds_indices = set([value[0] for value in np.argwhere(np.array(uniprot_to_preds[uniprot_id]) >= cutoff)])
             vizResidues(pdb = uniprot_to_pdb[uniprot_id], outdir=outdir, indices=uniprot_to_true[uniprot_id], offset=uniprot_to_offset[uniprot_id], indices2=preds_indices, resolution=resolution, fpr=fpr)
 
     if mode == "spectrum":
         uniprot_ids = (uniprot_to_preds.keys() & uniprot_to_pdb.keys())
-        for uniprot_id in tqdm(uniprot_ids, desc=f"Rendering {len(uniprot_ids)} proteins in {mode =}", ncols=100):
+        for uniprot_id in tqdm(uniprot_ids, desc=f"Rendering {len(uniprot_ids)} proteins in {mode = }", ncols=100):
             vizSpectrum(pdb=uniprot_to_pdb[uniprot_id], outdir=outdir, probabilities=uniprot_to_preds[uniprot_id], offset=uniprot_to_offset[uniprot_id], resolution=resolution, fpr=fpr)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='This tool visualizes binding residue on the 3D structure of proteins. Make sure PyMol is installed on your system.')
+    parser = argparse.ArgumentParser(description='This tool visualizes binding residue on the 3D structure of proteins. Make sure PyMol is installed on your system.', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('-p', '--predsdir', required=True, help='directory containing predictions in specific format, see sample file. If your predictions are not available in this specific format. Please use the functions directly.')
-    parser.add_argument('-t', '--trues', required=True, help='file containing known binding residues, see sample file. If your true values are not available in this specific format. Please use the functions directly.')
-    parser.add_argument('-o', '--outdir', required=True, help='output directory for visualizations')
+    parser._action_groups.pop()
+    required = parser.add_argument_group('required arguments')
+    optional = parser.add_argument_group('optional arguments')
 
-    parser.add_argument('-lm', '--ligandmap', required=False, help='ligand map, maps UniProt sequences to PBD structures. If no map is provided, stored map will be used.')
-    parser.add_argument('-lt', '--ligandtype', required=False, default = "small", help='ligand type to analyse, options are: small, metal and nuclear')
-    parser.add_argument('-c', '--cutoff', default=0.5, type=float, required=False, help='cutoff used when converting float binding probabilities to binary predictions')
-    parser.add_argument('-res', '--resolution', default=500, type=int, required=False, help=('resolution of the render, number of pixels for height and width, always a square'))
-    parser.add_argument('-fpr', '--fpr', default=12, type=int, required=False, help=('frames per rotation - number of frames generated for one full rotation of the protein, more frames lead to longer render times'))
-    parser.add_argument('-s', '--spectrum', required=False, action='store_true', help="visualize probabilities as continous color spectrum instead of binary predictions")
+    required.add_argument('-p', '--predsdir', required=True, help='directory containing predictions in specific format, see sample file. If your predictions are not available in this specific format. Please use the functions directly.')
+    required.add_argument('-t', '--trues', required=True, help='file containing known binding residues, see sample file. If your true values are not available in this specific format. Please use the functions directly.')
+    required.add_argument('-o', '--outdir', required=True, help='output directory for visualizations')
+
+    optional.add_argument('-lm', '--ligandmap', required=False, help='ligand map, maps UniProt sequences to PBD structures. If no map is provided, stored map will be used.')
+    optional.add_argument('-lt', '--ligandtype', required=False, default = "small", help='ligand type to analyse, options are: small, metal and nuclear')
+    optional.add_argument('-c', '--cutoff', default=0.5, type=float, required=False, help='cutoff used when converting float binding probabilities to binary predictions')
+    optional.add_argument('-res', '--resolution', default=500, type=int, required=False, help=('resolution of the render, number of pixels for height and width, always a square'))
+    optional.add_argument('-fpr', '--fpr', default=12, type=int, required=False, help=('frames per rotation - number of frames generated for one full rotation of the protein, more frames lead to longer render times'))
+    optional.add_argument('-s', '--spectrum', required=False, action='store_true', help="visualize probabilities as continous color spectrum instead of binary predictions")
 
     args = parser.parse_args()
 

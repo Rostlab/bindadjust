@@ -5,6 +5,8 @@ import numpy as np
 from tqdm import tqdm
 
 # predictions indices
+from utils import parse_preds_file
+
 INDEX_INDEX = 0
 METAL_PROB = 1
 METAL_CLASS = 2
@@ -13,7 +15,6 @@ NUCLEAR_CLASS = 4
 SMALL_PROB = 5
 SMALL_CLASS = 6
 ANY_CLASS = 7
-
 
 def adjust_prob(probs : list(), distances, valid_distances, C : int) -> list():
 
@@ -78,25 +79,13 @@ def write_to_file(filename, outdir, modified_small_probs, modified_metal_probs, 
 
 
 def main(outdir : str, preds_dir : str, distance_maps_dir : str, C : int = 20, layer_index: int = 0):
-
     for filename in tqdm(os.listdir(preds_dir)):
-
         try:
             uniprot_id = filename.split(".")[0]
             if not os.path.isfile(f"{distance_maps_dir}/{uniprot_id}.npy"):
                 continue
 
-            small_probs = []
-            metal_probs = []
-            nuclear_probs = []
-
-            with open(os.path.join(preds_dir, filename), "r") as predictions:
-                predictions.readline()  # skip header line
-                for line in predictions:
-                    values = line.split()
-                    small_probs.append(float(values[SMALL_PROB]))
-                    metal_probs.append(float(values[METAL_PROB]))
-                    nuclear_probs.append(float(values[NUCLEAR_PROB]))
+            small_probs,  metal_probs, nuclear_probs = parse_preds_file(os.path.join(preds_dir, filename))
         except:
             print(f'error parsing binding probabilities of file: {filename}')
             continue
@@ -114,7 +103,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='bindAdjust modifies the binding probabilities of protein residues by taking into account the probability of each residue and the distances between them. The tool requires protein binding probabilites and distance maps to function.')
 
     parser.add_argument('-p', '--predsdir', required=True, help='directory containing predictions in specific format, see sample file. If your predictions are not available in this specific format. Please use the functions directly.')
-    parser.add_argument('-o', '--outdir', required=True, help='output directory for visualizations')
+    parser.add_argument('-o', '--outdir', required=True, help='output directory')
     parser.add_argument('-d', '--distancemap', required=True, help='directory containing protein distance maps, see sample file of distance map for required file structure and name.')
 
     parser.add_argument('-c', '--coef', required=False, type=int, default=20, help='coefficient used in bindAdjust. The larger C, the larger the modification.')

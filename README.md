@@ -1,25 +1,176 @@
-# BindRefine
+# Repository of Bachelor's Thesis "Refinement of Binding Residue Predictions Using Distance Maps"
 
-This project aims to refine per residue ligand type predictions using predicted distance maps. This is achieved by clustering the residues based on the distances and subsequently removing noise and/or small clusters from the predictions. The goal
-is to reduce the number of false positive while maintaining a high recall. 
+### Introduction
+This is the repository of my bachelor's thesis "Refinement of Binding Residue Predictions Using Distance Maps" at RostLab, completed on November 15, 2021.
+This repo not only contains the entire codebase but also some example input and output files. 
+If your input files are in the exact same format as the sample files, you can use the scripts main methods.
+Otherwise, it is advised to incorporate the implemented functions in your own code. 
 
-To access the performace of the tool visually, the predictions and the refined predictions can be visualized in gif-format.
+The application constitutes 3 independent modules:
 
-##Example
+- **bindViz.py**  uses PyMol to visualize binding residues on the protein 3D structures. It outputs a .gif file of a rotating protein annotated with its binding residue.
+- **bindAdjust.py** modifies the small, metal and nuclear binding probabilities of all residues based on the distances between them. 
+- **bindRefine.py** identifies one or several sections of the protein with the highest average binding probability. 
+<!---- **bindDB.py** applies the clustering algorithm DBSCAN to the distances and identifies outlying residues.-->
 
-###Before
+###How To bindViz.py
 
-![](demo_files/Q9KFA8_2hti_before.gif)
+```
+usage: bindViz.py [-h] -p PREDSDIR -t TRUES -o OUTDIR [-lm LIGANDMAP]
+                  [-lt LIGANDTYPE] [-c CUTOFF] [-res RESOLUTION] [-fpr FPR]
+                  [-s]
 
-###After
+This tool visualizes binding residue on the 3D structure of proteins. Make
+sure PyMol is installed on your system.
 
-![](demo_files/Q9KFA8_2hti_after.gif)
+required arguments:
+  -p PREDSDIR, --predsdir PREDSDIR
+                        directory containing predictions in specific format,
+                        see sample file. If your predictions are not available
+                        in this specific format. Please use the functions
+                        directly. (default: None)
+  -t TRUES, --trues TRUES
+                        file containing known binding residues, see sample
+                        file. If your true values are not available in this
+                        specific format. Please use the functions directly.
+                        (default: None)
+  -o OUTDIR, --outdir OUTDIR
+                        output directory for visualizations (default: None)
+
+optional arguments:
+  -lm LIGANDMAP, --ligandmap LIGANDMAP
+                        ligand map, maps UniProt sequences to PBD structures.
+                        If no map is provided, stored map will be used.
+                        (default: None)
+  -lt LIGANDTYPE, --ligandtype LIGANDTYPE
+                        ligand type to analyse, options are: small, metal and
+                        nuclear (default: small)
+  -c CUTOFF, --cutoff CUTOFF
+                        cutoff used when converting float binding
+                        probabilities to binary predictions (default: 0.5)
+  -res RESOLUTION, --resolution RESOLUTION
+                        resolution of the render, number of pixels for height
+                        and width, always a square (default: 500)
+  -fpr FPR, --fpr FPR   frames per rotation - number of frames generated for
+                        one full rotation of the protein, more frames lead to
+                        longer render times (default: 12)
+  -s, --spectrum        visualize probabilities as continous color spectrum
+                        instead of binary predictions (default: False)
+  ```
+    
+###Example call using example files:
+
+```
+python3 bindViz.py -o <outdir> -lt small -p files/example_input/predictions -t files/example_input/binding_residues_2.5_small.txt -res 1000 -fpr 10
+```
+
+###Required Packages For bindViz.py
+It is important that PyMol is running and that the following packages are installed in the enviroment:
+- imageio
+- tqdm
+- pymol
+
+###Example Visualizations
+####Comparing predicted to annotated residues
+![](files/example_output/visualizations/1qgq.gif)
+
+####Binding probabilities as a color spectrum
+![](files/example_output/visualizations/3juc_spectrum.gif)
 
 
-While some TP (red) are removes, the cluster at the top stays. 
+##How To bindAdjust.py
 
-### How To
+```
+usage: bindRefine.py [-h] -p PREDSDIR -o OUTDIR -d DISTANCEMAP
+                     (-eps EPSILON | -k K) [-l LAYER]
 
+This tool identifies a section of a protein with the highest average ligand
+binding probability.
+
+required arguments:
+  -p PREDSDIR, --predsdir PREDSDIR
+                        directory containing predictions in specific format,
+                        see sample file. If your predictions are not available
+                        in this specific format. Please use the functions
+                        directly. (default: None)
+  -o OUTDIR, --outdir OUTDIR
+                        output directory (default: None)
+  -d DISTANCEMAP, --distancemap DISTANCEMAP
+                        directory containing protein distance maps, see sample
+                        file of distance map for required file structure and
+                        name. (default: None)
+  -eps EPSILON, --epsilon EPSILON
+                        set this value if you want to use epsilon mode of
+                        bindRefine (default: None)
+  -k K, --k K           set this value if you want to use k mode of bindRefine
+                        (default: None)
+
+optional arguments:
+  -l LAYER, --layer LAYER
+                        index of distance map layer. Options: 0 N, 1 C-alpha,
+                        2 C-beta and 3 backbone C distances (default: 3)
+```
+###Example call using example files:
+
+```
+python3 bindAdjust.py -o <outdir> -p files/example_input/predictions -d files/example_input/distance_maps -C 15
+```
+
+###Required Packages For bindAdjust.py
+- tqdm
+- numpy
+
+
+##How To bindRefine.py
+
+```
+usage: bindRefine.py [-h] -p PREDSDIR -o OUTDIR -d DISTANCEMAP
+                     (-eps EPSILON | -k K) [-l LAYER]
+
+This tool identifies a section of a protein with the highest average ligand
+binding probability.
+
+required arguments:
+  -p PREDSDIR, --predsdir PREDSDIR
+                        directory containing predictions in specific format,
+                        see sample file. If your predictions are not available
+                        in this specific format. Please use the functions
+                        directly. (default: None)
+  -o OUTDIR, --outdir OUTDIR
+                        output directory (default: None)
+  -d DISTANCEMAP, --distancemap DISTANCEMAP
+                        directory containing protein distance maps, see sample
+                        file of distance map for required file structure and
+                        name. (default: None)
+  -eps EPSILON, --epsilon EPSILON
+                        set this value if you want to use epsilon mode of
+                        bindRefine (default: None)
+  -k K, --k K           set this value if you want to use k mode of bindRefine
+                        (default: None)
+
+optional arguments:
+  -l LAYER, --layer LAYER
+                        index of distance map layer. Options: 0 N, 1 C-alpha,
+                        2 C-beta and 3 backbone C distances (default: 3)
+```
+###Example call using example files:
+```
+python3 bindRefine.py -o <outdir> -p files/example_input/predictions -d files/example_input/distance_maps -k 10
+```
+
+###Required Packages For bindRefine.py
+- tqdm
+- numpy
+
+
+
+
+
+
+
+
+
+<!--
 You can find example files for each input files in examples/.
 
 Input files:
@@ -35,6 +186,46 @@ Refinement of binding residue predictions using known and predicted structures.
 ### Usage
 
 ```
+usage: bindViz.py [-h] -p PREDSDIR -t TRUES -o OUTDIR [-lm LIGANDMAP]
+                  [-lt LIGANDTYPE] [-c CUTOFF] [-res RESOLUTION] [-fpr FPR]
+                  [-s]
+
+This tool visualizes binding residue on the 3D structure of proteins. Make
+sure PyMol is installed on your system.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -p PREDSDIR, --predsdir PREDSDIR
+                        directory containing predictions in specific format,
+                        see sample file. If your predictions are not available
+                        in this specific format. Please use the functions
+                        directly.
+  -t TRUES, --trues TRUES
+                        file containing known binding residues, see sample
+                        file. If your true values are not available in this
+                        specific format. Please use the functions directly.
+  -o OUTDIR, --outdir OUTDIR
+                        output directory for visualizations
+  -lm LIGANDMAP, --ligandmap LIGANDMAP
+                        ligand map, maps UniProt sequences to PBD structures.
+                        If no map is provided, stored map will be used.
+  -lt LIGANDTYPE, --ligandtype LIGANDTYPE
+                        ligand type to analyse, options are: small, metal and
+                        nuclear
+  -c CUTOFF, --cutoff CUTOFF
+                        cutoff used when converting float binding
+                        probabilities to binary predictions
+  -res RESOLUTION, --resolution RESOLUTION
+                        resolution of the render, number of pixels for height
+                        and width, always a square
+  -fpr FPR, --fpr FPR   frames per rotation - number of frames generated for
+                        one full rotation of the protein, more frames lead to
+                        longer render times
+  -s, --spectrum        visualize probabilities as continous color spectrum
+                        instead of binary predictions
+
+
+
 usage: main.py [-h] -o OUTDIR -u UNIPROT -lm LIGANDMAP -p PREDSDIR -t TRUES
                [-th THRESHOLD] [-fps FPS] [-d DISTANCEMAP] [-v] [-s] [-r]
 
