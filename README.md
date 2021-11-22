@@ -6,7 +6,7 @@ This repo not only contains the entire codebase but also some example input and 
 If your input files are in the exact same format as the sample files, you can use the scripts main methods.
 Otherwise, it is advised to incorporate the implemented functions in your own code. 
 
-###How To bindViz.py
+### How To bindViz.py
 
 
 The application constitutes 3 independent modules:
