@@ -71,7 +71,6 @@ It is important that PyMol is running and that the following packages are instal
 
 ### Example Visualizations
 #### Comparing predicted to annotated residues
-
 - Blue = True Positives 
 - Red = False Positives 
 - Light Blue = False Negatives 
@@ -80,6 +79,9 @@ It is important that PyMol is running and that the following packages are instal
 ![](files/example_output/bindViz/1s2k.gif)
 
 #### Binding probabilities as a color spectrum
+- Cyen = low probability
+- Red = high probability
+
 ![](files/example_output/bindViz/3q4o_spectrum.gif)
 
 
