@@ -71,13 +71,19 @@ It is important that PyMol is running and that the following packages are instal
 
 ### Example Visualizations
 #### Comparing predicted to annotated residues
+
+- Blue = True Positives 
+- Red = False Positives 
+- Light Blue = False Negatives 
+- Grey = True Negatives
+
 ![](files/example_output/bindViz/1s2k.gif)
 
 #### Binding probabilities as a color spectrum
 ![](files/example_output/bindViz/3q4o_spectrum.gif)
 
 
-### How To bindAdjust.py
+## How To bindAdjust.py
 
 ```
 usage: bindRefine.py [-h] -p PREDSDIR -o OUTDIR -d DISTANCEMAP
