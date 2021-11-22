@@ -6,16 +6,13 @@ This repo not only contains the entire codebase but also some example input and 
 If your input files are in the exact same format as the sample files, you can use the scripts main methods.
 Otherwise, it is advised to incorporate the implemented functions in your own code. 
 
-### How To bindViz.py
-
-
 The application constitutes 3 independent modules:
 
-- **bindViz.py**  uses PyMol to visualize binding residues on the protein 3D structures. It outputs a .gif file of a rotating protein annotated with its binding residue.
+- **bindViz.py**  uses PyMol to visualize binding residues on the protein 3D structures. It outputs a .gif file of a rotating protein annotated with its binding residues.
 - **bindAdjust.py** modifies the small, metal and nuclear binding probabilities of all residues based on the distances between them.
 - **bindRefine.py** identifies one or several sections of the protein with the highest average binding probability.
 
-
+## How To bindViz.py
 
 ```
 usage: bindViz.py [-h] -p PREDSDIR -t TRUES -o OUTDIR [-lm LIGANDMAP]
@@ -60,27 +57,27 @@ optional arguments:
                         instead of binary predictions (default: False)
   ```
     
-###Example call using example files:
+### Example call using example files:
 
 ```
 python3 bindViz.py -o <outdir> -lt small -p files/example_input/predictions -t files/example_input/binding_residues_2.5_small.txt -res 1000 -fpr 10
 ```
 
-###Required Packages For bindViz.py
+### Required Packages For bindViz.py
 It is important that PyMol is running and that the following packages are installed in the enviroment:
 - imageio
 - tqdm
 - pymol
 
-###Example Visualizations
-####Comparing predicted to annotated residues
+### Example Visualizations
+#### Comparing predicted to annotated residues
 ![](files/example_output/bindViz/1s2k.gif)
 
-####Binding probabilities as a color spectrum
+#### Binding probabilities as a color spectrum
 ![](files/example_output/bindViz/3q4o_spectrum.gif)
 
 
-##How To bindAdjust.py
+### How To bindAdjust.py
 
 ```
 usage: bindRefine.py [-h] -p PREDSDIR -o OUTDIR -d DISTANCEMAP
@@ -112,18 +109,18 @@ optional arguments:
                         index of distance map layer. Options: 0 N, 1 C-alpha,
                         2 C-beta and 3 backbone C distances (default: 3)
 ```
-###Example call using example files:
+### Example call using example files:
 
 ```
 python3 bindAdjust.py -o <outdir> -p files/example_input/predictions -d files/example_input/distance_maps -C 15
 ```
 
-###Required Packages For bindAdjust.py
+### Required Packages For bindAdjust.py
 - tqdm
 - numpy
 
 
-##How To bindRefine.py
+## How To bindRefine.py
 
 ```
 usage: bindRefine.py [-h] -p PREDSDIR -o OUTDIR -d DISTANCEMAP
@@ -155,12 +152,12 @@ optional arguments:
                         index of distance map layer. Options: 0 N, 1 C-alpha,
                         2 C-beta and 3 backbone C distances (default: 3)
 ```
-###Example call using example files:
+### Example call using example files:
 ```
 python3 bindRefine.py -o <outdir> -p files/example_input/predictions -d files/example_input/distance_maps -k 10
 ```
 
-###Required Packages For bindRefine.py
+### Required Packages For bindRefine.py
 - tqdm
 - numpy
 
