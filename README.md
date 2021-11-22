@@ -72,7 +72,7 @@ It is important that PyMol is running and that the following packages are instal
 
 ###Example Visualizations
 ####Comparing predicted to annotated residues
-![](files/example_output/bindViz/4wx4.gif)
+![](files/example_output/bindViz/1s2k.gif)
 
 ####Binding probabilities as a color spectrum
 ![](files/example_output/bindViz/3q4o_spectrum.gif)
