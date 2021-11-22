@@ -9,7 +9,7 @@ from tqdm import tqdm
 from utils import parse_preds_file
 
 
-def refine(probs, distances, valid_layer, epsilon=None, k=None, l=1, overlap=True):
+def refine(probs, distances, valid_layer, epsilon=None, k=None, l=1, overlap=True, layer=3):
     if epsilon is None and k is None:
         print("Please specify either k or epsilon. For more information on parameter usage, please read the documentation at [link] or print help using -h")
         exit(-1)
@@ -83,9 +83,9 @@ def main(outdir: str, preds_dir: str, distance_maps_dir: str, layer_index: int =
         distances = distance_map[:, :, layer_index]
         valid_layer = distance_map[:, :, 4]
 
-        small_refine = refine(small_probs, distances, valid_layer, epsilon=eps, k=k, l=1, overlap=True)
-        metal_refine = refine(metal_probs, distances, valid_layer, epsilon=eps, k=k, l=1, overlap=True)
-        nuclear_refine = refine(nuclear_probs, distances, valid_layer, epsilon=eps, k=k, l=1, overlap=True)
+        small_refine = refine(small_probs, distances, valid_layer, epsilon=eps, k=k, l=1, overlap=True, layer=layer_index)
+        metal_refine = refine(metal_probs, distances, valid_layer, epsilon=eps, k=k, l=1, overlap=True, layer=layer_index)
+        nuclear_refine = refine(nuclear_probs, distances, valid_layer, epsilon=eps, k=k, l=1, overlap=True, layer=layer_index)
 
         write_to_file(filename=f"{uniprot_id + '.bindRefine_eps_' + str(eps) if k is None else uniprot_id + '.bindRefine_k_' + str(k)}", outdir=outdir,
                       small_hotspot=small_refine, metal_hotspot=metal_refine, nuclear_hotspot=nuclear_refine,
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     required.add_argument('-o', '--outdir', required=True, help='output directory')
     required.add_argument('-d', '--distancemap', required=True, help='directory containing protein distance maps, see sample file of distance map for required file structure and name.')
 
-    group = parser.add_mutually_exclusive_group(required=True)
+    group = required.add_mutually_exclusive_group(required=True)
     group.add_argument('-eps', '--epsilon', type=float, help='set this value if you want to use epsilon mode of bindRefine')
     group.add_argument('-k', '--k', type=int, help='set this value if you want to use k mode of bindRefine')
 

@@ -28,24 +28,32 @@ def parse_trues(filepath: str) -> dict():
     except:
         print('error parsing true file, pls check if file has correct format')
 
-def parse_preds(filedir: str, ligand_type: str) -> dict():
-    if ligand_type == "small":
-        index = SMALL_PROB
-    elif ligand_type == "metal":
-        index = METAL_PROB
-    elif ligand_type == "nuclear":
-        index = NUCLEAR_PROB
+def parse_preds_file(filepath : str):
+    small_probs = []
+    metal_probs = []
+    nuclear_probs = []
 
+    with open(filepath, "r") as predictions:
+        predictions.readline()  # skip header line
+        for line in predictions:
+            values = line.split()
+            small_probs.append(float(values[SMALL_PROB]))
+            metal_probs.append(float(values[METAL_PROB]))
+            nuclear_probs.append(float(values[NUCLEAR_PROB]))
+
+    return small_probs, metal_probs, nuclear_probs
+
+
+
+def parse_preds(filedir: str, ligand_type: str) -> dict():
     uniprot_to_preds_dict = {}
     for filename in os.listdir(filedir):
         try:
             uniprot_id = filename.split(".")[0]
-            uniprot_to_preds_dict[uniprot_id] = []
-            with open(os.path.join(filedir, filename), "r") as predictions:
-                predictions.readline()  #skip header line
-                for line in predictions:
-                    values = line.split()
-                    uniprot_to_preds_dict[uniprot_id].append(float(values[index]))
+            small_probs, metal_probs, nuclear_probs = parse_preds_file(os.path.join(filedir, filename))
+            if ligand_type == 'small': uniprot_to_preds_dict[uniprot_id] = small_probs
+            elif ligand_type == 'metal': uniprot_to_preds_dict[uniprot_id] = metal_probs
+            elif ligand_type == 'nuclear': uniprot_to_preds_dict[uniprot_id] = nuclear_probs
         except:
             print(f'error parsing prediction {filename = }. Pls make sure no other files are in predictions folder.')
 

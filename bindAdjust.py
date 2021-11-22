@@ -16,8 +16,8 @@ SMALL_PROB = 5
 SMALL_CLASS = 6
 ANY_CLASS = 7
 
-def adjust_prob(probs : list(), distances, valid_distances, C : int) -> list():
 
+def adjust_prob(probs: list(), distances, valid_distances, C: int) -> list():
     if not valid_distances.any():
         return probs
 
@@ -52,7 +52,7 @@ def adjust_prob(probs : list(), distances, valid_distances, C : int) -> list():
     return np.array(probs) + boni
 
 
-def adjust_probs(small_probs, metal_probs, nuclear_probs, distances, valid_distances=None, C : int = 20):
+def adjust_probs(small_probs, metal_probs, nuclear_probs, distances, valid_distances=None, C: int = 20):
     if valid_distances is None:
         valid_distances = np.ones(shape=(len(distances[0]), len(distances[0])))
 
@@ -68,7 +68,7 @@ def adjust_probs(small_probs, metal_probs, nuclear_probs, distances, valid_dista
 
 
 # writes adjusted probs in the same formet bindPredict does
-def write_to_file(filename, outdir, modified_small_probs, modified_metal_probs, modified_nuclear_probs, cutoff = 0.5):
+def write_to_file(filename, outdir, modified_small_probs, modified_metal_probs, modified_nuclear_probs, cutoff=0.5):
     with open(os.path.join(outdir, filename), "w") as file:
         file.write("Position\tMetal.Proba\tMetal.Class\tNuclear.Proba\tNuclear.Class\tSmall.Proba\tSmall.Class\tAny.Class\n")
         for index in range(len(modified_metal_probs)):
@@ -78,14 +78,14 @@ def write_to_file(filename, outdir, modified_small_probs, modified_metal_probs, 
                        f"\t{'b' if modified_small_probs[index] > cutoff or modified_metal_probs[index] > cutoff or modified_nuclear_probs[index] > cutoff else 'nb'}\n")
 
 
-def main(outdir : str, preds_dir : str, distance_maps_dir : str, C : int = 20, layer_index: int = 0):
+def main(outdir: str, preds_dir: str, distance_maps_dir: str, C: int = 20, layer_index: int = 0):
     for filename in tqdm(os.listdir(preds_dir)):
         try:
             uniprot_id = filename.split(".")[0]
             if not os.path.isfile(f"{distance_maps_dir}/{uniprot_id}.npy"):
                 continue
 
-            small_probs,  metal_probs, nuclear_probs = parse_preds_file(os.path.join(preds_dir, filename))
+            small_probs, metal_probs, nuclear_probs = parse_preds_file(os.path.join(preds_dir, filename))
         except:
             print(f'error parsing binding probabilities of file: {filename}')
             continue
@@ -94,23 +94,32 @@ def main(outdir : str, preds_dir : str, distance_maps_dir : str, C : int = 20, l
         distances = distance_map[:, :, layer_index]
         valid_layer = distance_map[:, :, 4]
 
-        modified_small_probs, modified_metal_probs, modified_nuclear_probs = adjust_probs(small_probs=small_probs, metal_probs=metal_probs, nuclear_probs=nuclear_probs, distances=distances, valid_distances=valid_layer, C=C)
+        modified_small_probs, modified_metal_probs, modified_nuclear_probs = adjust_probs(small_probs=small_probs, metal_probs=metal_probs, nuclear_probs=nuclear_probs, distances=distances,
+                                                                                          valid_distances=valid_layer, C=C)
 
-        write_to_file(filename=f'{uniprot_id}.bindAdjust_out', outdir=outdir, modified_small_probs=modified_small_probs, modified_metal_probs=modified_metal_probs, modified_nuclear_probs=modified_nuclear_probs)
+        write_to_file(filename=f'{uniprot_id}.bindAdjust_out', outdir=outdir, modified_small_probs=modified_small_probs, modified_metal_probs=modified_metal_probs,
+                      modified_nuclear_probs=modified_nuclear_probs)
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='bindAdjust modifies the binding probabilities of protein residues by taking into account the probability of each residue and the distances between them. The tool requires protein binding probabilites and distance maps to function.')
+    parser = argparse.ArgumentParser(
+        description='bindAdjust modifies the binding probabilities of protein residues by taking into account the probability of each residue and the distances between them. The tool requires protein binding probabilites and distance maps to function.',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('-p', '--predsdir', required=True, help='directory containing predictions in specific format, see sample file. If your predictions are not available in this specific format. Please use the functions directly.')
-    parser.add_argument('-o', '--outdir', required=True, help='output directory')
-    parser.add_argument('-d', '--distancemap', required=True, help='directory containing protein distance maps, see sample file of distance map for required file structure and name.')
+    parser._action_groups.pop()
 
-    parser.add_argument('-c', '--coef', required=False, type=int, default=20, help='coefficient used in bindAdjust. The larger C, the larger the modification.')
-    parser.add_argument('-l', '--layer', required=False, type=int, default=3, help='index of distance map layer. Options: 0 N, 1 C-alpha, 2 C-beta and 3 backbone C distances')
+    required = parser.add_argument_group('required arguments')
+    optional = parser.add_argument_group('optional arguments')
+
+    required.add_argument('-p', '--predsdir', required=True,
+                          help='directory containing predictions in specific format, see sample file. If your predictions are not available in this specific format. Please use the functions directly.')
+    required.add_argument('-o', '--outdir', required=True, help='output directory')
+    required.add_argument('-d', '--distancemap', required=True, help='directory containing protein distance maps, see sample file of distance map for required file structure and name.')
+
+    optional.add_argument('-c', '--coef', required=False, type=int, default=20, help='coefficient used in bindAdjust. The larger C, the larger the modification.')
+    optional.add_argument('-l', '--layer', required=False, type=int, default=3, help='index of distance map layer. Options: 0 N, 1 C-alpha, 2 C-beta and 3 backbone C distances')
 
     args = parser.parse_args()
-
 
     if not os.path.isdir(args.outdir):
         print('provided output directory does not exist or is not a directory.')
@@ -124,4 +133,4 @@ if __name__ == '__main__':
         print('provided prediction directory does not exist or is not a directory.')
         exit(0)
 
-    main(outdir = args.outdir, preds_dir = args.predsdir, distance_maps_dir = args.distancemap, C = args.coef, layer_index=args.layer)
+    main(outdir=args.outdir, preds_dir=args.predsdir, distance_maps_dir=args.distancemap, C=args.coef, layer_index=args.layer)

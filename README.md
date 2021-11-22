@@ -72,10 +72,10 @@ It is important that PyMol is running and that the following packages are instal
 
 ###Example Visualizations
 ####Comparing predicted to annotated residues
-![](files/example_output/visualizations/1qgq.gif)
+![](files/example_output/bindViz/4wx4.gif)
 
 ####Binding probabilities as a color spectrum
-![](files/example_output/visualizations/3juc_spectrum.gif)
+![](files/example_output/bindViz/3q4o_spectrum.gif)
 
 
 ##How To bindAdjust.py
@@ -164,89 +164,3 @@ python3 bindRefine.py -o <outdir> -p files/example_input/predictions -d files/ex
 
 
 
-
-
-
-
-
-
-<!--
-You can find example files for each input files in examples/.
-
-Input files:
-
-1. Uniprot IDs
-2. Ligand Map (offset and Uniprot -> PDB link)
-3. (optional) Trues, per residue ligand type
-4. Predictions, per residue binding molecule
-5. Distance maps for each protein
-
-Refinement of binding residue predictions using known and predicted structures.
-
-### Usage
-
-```
-usage: bindViz.py [-h] -p PREDSDIR -t TRUES -o OUTDIR [-lm LIGANDMAP]
-                  [-lt LIGANDTYPE] [-c CUTOFF] [-res RESOLUTION] [-fpr FPR]
-                  [-s]
-
-This tool visualizes binding residue on the 3D structure of proteins. Make
-sure PyMol is installed on your system.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -p PREDSDIR, --predsdir PREDSDIR
-                        directory containing predictions in specific format,
-                        see sample file. If your predictions are not available
-                        in this specific format. Please use the functions
-                        directly.
-  -t TRUES, --trues TRUES
-                        file containing known binding residues, see sample
-                        file. If your true values are not available in this
-                        specific format. Please use the functions directly.
-  -o OUTDIR, --outdir OUTDIR
-                        output directory for visualizations
-  -lm LIGANDMAP, --ligandmap LIGANDMAP
-                        ligand map, maps UniProt sequences to PBD structures.
-                        If no map is provided, stored map will be used.
-  -lt LIGANDTYPE, --ligandtype LIGANDTYPE
-                        ligand type to analyse, options are: small, metal and
-                        nuclear
-  -c CUTOFF, --cutoff CUTOFF
-                        cutoff used when converting float binding
-                        probabilities to binary predictions
-  -res RESOLUTION, --resolution RESOLUTION
-                        resolution of the render, number of pixels for height
-                        and width, always a square
-  -fpr FPR, --fpr FPR   frames per rotation - number of frames generated for
-                        one full rotation of the protein, more frames lead to
-                        longer render times
-  -s, --spectrum        visualize probabilities as continous color spectrum
-                        instead of binary predictions
-
-
-
-usage: main.py [-h] -o OUTDIR -u UNIPROT -lm LIGANDMAP -p PREDSDIR -t TRUES
-               [-th THRESHOLD] [-fps FPS] [-d DISTANCEMAP] [-v] [-s] [-r]
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -o OUTDIR, --outdir OUTDIR
-                        Output directory for files and visualizations
-  -u UNIPROT, --uniprot UNIPROT
-                        Input file: List of uniprot ids to analyse
-  -lm LIGANDMAP, --ligandmap LIGANDMAP
-                        Input file: Ligand map
-  -p PREDSDIR, --predsdir PREDSDIR
-                        Directory containing predictions
-  -t TRUES, --trues TRUES
-                        File containing true ligand indices and types
-  -th THRESHOLD, --threshold THRESHOLD
-                        Threshold used for classification of predictions
-  -fps FPS              fps (not really fps) of rendered gif
-  -d DISTANCEMAP, --distancemap DISTANCEMAP
-                        Directory containing distance maps for clustering
-  -v, --verbose         Verbose boolean
-  -s, --save            Saves results as csv
-  -r, --render          Renders gif of protein
-```
