@@ -6,6 +6,9 @@ This repo not only contains the entire codebase but also some example input and 
 If your input files are in the exact same format as the sample files, you can use the scripts main methods.
 Otherwise, it is advised to incorporate the implemented functions in your own code. 
 
+###How To bindViz.py
+
+
 The application constitutes 3 independent modules:
 
 - **bindViz.py**  uses PyMol to visualize binding residues on the protein 3D structures. It outputs a .gif file of a rotating protein annotated with its binding residue.
@@ -13,7 +16,6 @@ The application constitutes 3 independent modules:
 - **bindRefine.py** identifies one or several sections of the protein with the highest average binding probability.
 
 
-###How To bindViz.py
 
 ```
 usage: bindViz.py [-h] -p PREDSDIR -t TRUES -o OUTDIR [-lm LIGANDMAP]
