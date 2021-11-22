@@ -11,7 +11,6 @@ The application constitutes 3 independent modules:
 - **bindViz.py**  uses PyMol to visualize binding residues on the protein 3D structures. It outputs a .gif file of a rotating protein annotated with its binding residue.
 - **bindAdjust.py** modifies the small, metal and nuclear binding probabilities of all residues based on the distances between them. 
 - **bindRefine.py** identifies one or several sections of the protein with the highest average binding probability. 
-<!---- **bindDB.py** applies the clustering algorithm DBSCAN to the distances and identifies outlying residues.-->
 
 ###How To bindViz.py
 
