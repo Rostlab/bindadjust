@@ -168,5 +168,10 @@ python3 bindRefine.py -o <outdir> -p files/example_input/predictions -d files/ex
 - tqdm
 - numpy
 
+## Cite
+
+If you want to credit us, feel free to cite
+
+Endres, L.,  Olenyi, T., Erckert, K., Weißenow, K., Rost, B., Littmann, M. Refining Embedding-Based Binding Predictions by Leveraging AlphaFold2 Structures.
 
 
