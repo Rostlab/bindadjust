@@ -1,8 +1,7 @@
-# Repository of Bachelor's Thesis "Refinement of Binding Residue Predictions Using Distance Maps"
+# Refining Embedding-Based Binding Predictions by Leveraging AlphaFold2 Structures
 
 ### Introduction
-This is the repository of my bachelor's thesis "Refinement of Binding Residue Predictions Using Distance Maps" at RostLab, completed on November 15, 2021.
-This repo not only contains the entire codebase but also some example input and output files. 
+This is the accompanying repository for Refining Embedding-Based Binding Predictions by Leveraging AlphaFold2 Structures. 
 If your input files are in the exact same format as the sample files, you can use the scripts main methods.
 Otherwise, it is advised to incorporate the implemented functions in your own code. 
 
